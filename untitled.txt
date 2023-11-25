@@ -120,6 +120,28 @@ local themeStyles = {
         ElementColor = Color3.fromRGB(22, 29, 31)
     }
 }
+    Loud = {
+        SchemeColor = Color3.fromRGB(143, 227, 235),
+        Background = Color3.fromRGB(83, 140, 145),
+        Header = Color3.fromRGB(66, 195, 207),
+        TextColor = Color3.fromRGB(255,255,255),
+        ElementColor = Color3.fromRGB(72, 96, 102)
+    },
+    Deep = {
+        SchemeColor = Color3.fromRGB(96, 120, 179),
+        Background = Color3.fromRGB(32, 48, 87),
+        Header = Color3.fromRGB(1, 24, 84),
+        TextColor = Color3.fromRGB(207, 220, 255),
+        ElementColor = Color3.fromRGB(86, 126, 227)
+    },
+    Sick = {
+        SchemeColor = Color3.fromRGB(17, 255, 13),
+        Background = Color3.fromRGB(74, 74, 72),
+        Header = Color3.fromRGB(41, 41, 40),
+        TextColor = Color3.fromRGB(255, 255, 255),
+        ElementColor = Color3.fromRGB(86, 126, 227)
+    }
+}
 local oldTheme = ""
 
 local SettingsT = {
@@ -187,6 +209,12 @@ function Kavo.CreateLib(kavName, themeList)
         themeList = themeStyles.Synapse
     elseif themeList == "Serpent" then
         themeList = themeStyles.Serpent
+    elseif themeList == "Loud" then
+        themeList = themeStyles.Loud
+    elseif themeList == "Deep" then
+        themeList = themeStyles.Deep
+    elseif themeList == "Sick" then
+        themeList = themeStyles.Sick    
     else
         if themeList.SchemeColor == nil then
             themeList.SchemeColor = Color3.fromRGB(74, 99, 135)
