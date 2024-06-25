@@ -280,7 +280,7 @@ function Kavo.CreateLib(kavName, themeList)
     title.BackgroundTransparency = 1.000
     title.BorderSizePixel = 0
     title.Position = UDim2.new(0, 50, 0, 7)
-    title.Size = UDim2.new(0, 204, 0, 8)
+    title.Size = UDim2.new(0, 220, 0, 10)
     title.Font = Enum.Font.Gotham
     title.RichText = true
     title.Text = kavName
@@ -299,22 +299,14 @@ function Kavo.CreateLib(kavName, themeList)
     title2.Size = UDim2.new(0, 204, 0, 8)
     title2.Font = Enum.Font.Gotham
     title2.RichText = true
-    title2.Text = "Made by xLM9AWD"
+    title2.Text = "Made by Nms"
     title2.TextColor3 = Color3.fromRGB(255, 218, 31)
     title2.TextSize = 14.000
     title2.TextXAlignment = Enum.TextXAlignment.Left
 
 local Corner3 = Instance.new("UICorner")
     
-    local Logo = Instance.new("ImageLabel")
-    
-    Logo.Name = "Logo"
-    Logo.Parent = MainHeader
-    Logo.BackgroundTransparency = 1.000
-    Logo.Position = UDim2.new(0, 10, 0, 3)
-    Logo.Size = UDim2.new(0, 30, 0, 25)
-    Logo.ZIndex = 2
-    Logo.Image = "http://www.roblox.com/asset/?id=12831856432"
+
     
     MainSide.Name = "MainSide"
     MainSide.Parent = Main
