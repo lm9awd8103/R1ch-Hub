@@ -315,7 +315,7 @@ function Kavo.CreateLib(kavName, themeList)
     title3.Size = UDim2.new(0, 204, 0, 8)
     title3.Font = Enum.Font.Gotham
     title3.RichText = true
-    title3.Text = "                                                                   Version: 1.0.0(new)"
+    title3.Text = "                                 Version: 1.0.0(new)"
     title3.TextColor3 = Color3.fromRGB(5, 5, 5)
     title3.TextSize = 14.000
     title3.TextXAlignment = Enum.TextXAlignment.Left
