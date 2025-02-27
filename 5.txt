@@ -264,7 +264,7 @@ BackgroundImage.Size = UDim2.new(1, 0, 1, 0)
 BackgroundImage.ZIndex = 10  -- Set it behind all other elements
 BackgroundImage.Image = "rbxassetid://115999273037408"
 BackgroundImage.ScaleType = Enum.ScaleType.Crop
-BackgroundImage.ImageTransparency = 0.7  -- Adjusted to make background less visible
+BackgroundImage.ImageTransparency = 0.8  -- Adjusted to make background less visible
 
 local function adjustTransparency(parent)
     for _, v in pairs(parent:GetDescendants()) do
