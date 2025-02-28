@@ -1,0 +1,1772 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/lm9awd8103/lm9awd8103/refs/heads/main/177.txt"))();
+local colors = {
+    SchemeColor = Color3.fromRGB(128, 0, 255),
+    Background = Color3.fromRGB(0, 0, 10),
+    Header = Color3.fromRGB(5, 5, 5),
+    TextColor = Color3.fromRGB(255,255,255),
+    ElementColor = Color3.fromRGB(20, 20, 20)
+}
+local Window = Library.CreateLib("TwilightXx hub",colors)
+local themes = {
+    "SchemeColor",
+    "Background",
+    "Header",
+    "TextColor",
+    "ElementColor"
+}
+
+local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+
+local Home = Window:NewTab("Overview Stats")
+local Section = Home:NewSection("Fps + Ping Counter")
+-- Ping Button
+local pingButton = Section:NewButton("Ping: Calculating...", "Click to refresh ping", function()
+    updatePing() -- Refresh ping immediately on click
+end)
+
+-- FPS Button
+local fpsButton = Section:NewButton("FPS: Calculating...", "Click to refresh FPS", function()
+    updateFPS() -- Refresh FPS immediately on click
+end)
+
+-- Function to update the ping
+local function updatePing()
+    local ping = math.floor(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())
+    pingButton:UpdateButton("Ping: " .. ping .. " ms")
+end
+
+-- Function to update the FPS
+local function updateFPS()
+    local fps = math.floor(1 / game:GetService("RunService").RenderStepped:Wait())
+    fpsButton:UpdateButton("FPS: " .. fps)
+end
+
+-- Use a non-blocking loop to update Ping and FPS
+local function startUpdates()
+    while true do
+        updatePing()
+        updateFPS()
+        task.wait(1) -- Yield for 1 second before updating again
+    end
+end
+
+-- Start the updates in a separate coroutine to avoid blocking the script
+coroutine.wrap(startUpdates)()
+
+local Section = Home:NewSection("Server")
+
+-- Services
+local Players = game:GetService("Players")
+
+-- Create the Player Count button
+local playerCountButton = Section:NewButton("Players: Calculating...", "Shows the number of players in the server", function()
+end)
+
+-- Function to update the Player Count button
+local function updatePlayerCount()
+    local playerCount = #Players:GetPlayers()
+    playerCountButton:UpdateButton("Players: " .. playerCount) -- Update button text
+    print("Player count updated: " .. playerCount) -- Debugging
+end
+
+-- Use a non-blocking loop to update the Player Count button
+local function startPlayerCountUpdates()
+    while true do
+        updatePlayerCount()
+        task.wait(1) -- Update every 1 second
+    end
+end
+
+-- Start the updates in a separate coroutine to avoid blocking the script
+coroutine.wrap(startPlayerCountUpdates)()
+
+local startTime = tick()  -- Get the server start time in seconds
+
+-- Create the button initially with placeholder text in 00:00:00 format
+local button = Section:NewButton("Server Started at: 00:00:00", "No description", function()
+    -- Add button click functionality here if needed
+end)
+
+-- Function to update the countdown every second
+local function updateCountdown()
+    while true do
+        local elapsedTime = tick() - startTime  -- Calculate elapsed time
+        local hours = math.floor(elapsedTime / 3600)  -- Get the number of hours
+        local minutes = math.floor((elapsedTime % 3600) / 60)  -- Get the number of minutes
+        local seconds = math.floor(elapsedTime % 60)  -- Get the number of seconds
+
+        -- Create the time string in 00:00:00 format (with leading zeros for all)
+        local timeString = string.format("%02d:%02d:%02d", hours, minutes, seconds)
+
+        -- Update the button text with the elapsed time in 00:00:00 format
+        button:UpdateButton("Started Countdown:  " .. timeString)
+
+        wait(1)  -- Wait 1 second before updating again
+    end
+end
+
+-- Start the countdown when the server starts
+spawn(updateCountdown)  -- This runs the countdown in a separate thread
+
+local Section = Home:NewSection("Real-Time + Date")
+
+local Button77 = Section:NewButton("Loading Date...", "Shows the current date", function()
+    print("Clicked")
+end)
+
+local function updateButton()
+    while true do
+        local currentDate = os.date("%Y-%m-%d") -- Formats as "YYYY-MM-DD"
+        Button77:UpdateButton("Date: " .. currentDate)
+        wait(60) -- Updates every 60 seconds (since it only changes once per day)
+    end
+end
+
+task.spawn(updateButton) -- Run the function in a separate thread
+
+-- 24-hour time format with animated colon
+local button24 = Section:NewButton("Current Real-Time: " .. os.date("%H:%M"), "Click to update time", function()
+end)
+
+local function updateTime24()
+    local showingColon = true
+    while true do
+        local hour = os.date("%H")
+        local minute = os.date("%M")
+
+        -- Alternate the colon visibility
+        local colon = showingColon and ":" or " "
+
+        -- Update button text
+        button24:UpdateButton("Currently Real-Time:  " .. hour .. colon .. minute)
+        
+        -- Toggle the colon visibility
+        showingColon = not showingColon
+        
+        wait(0.5)  -- Update every 0.5 seconds to alternate the colon
+    end
+end
+
+-- Start the real-time updating for 24-hour format
+spawn(function() updateTime24() end)
+
+-- 12-hour format with AM/PM and animated colon
+local button12 = Section:NewButton("Current time(AM/PM): " .. os.date("%I:%M") .. " " .. os.date("%p"), "Click to update time", function()
+end)
+
+local function updateTime12()
+    local showingColon = true
+    while true do
+        local hour = tonumber(os.date("%I"))  -- Get the 12-hour format hour
+        local minute = os.date("%M")
+        local ampm = os.date("%p")  -- Get AM/PM
+
+        -- Alternate the colon visibility
+        local colon = showingColon and ":" or " "
+
+        -- Update button text with correct AM/PM
+        button12:UpdateButton("[AM/PM]Current Real-Time:  " .. hour .. colon .. minute .. " " .. ampm)
+        
+        -- Toggle the colon visibility
+        showingColon = not showingColon
+        
+        wait(0.5)  -- Update every 0.5 seconds to alternate the colon
+    end
+end
+
+-- Start the real-time updating for 12-hour format
+spawn(function() updateTime12() end)
+
+
+local Section = Home:NewSection("Player Stats")
+-- Assuming 'player' is the object representing the player
+local player = game.Players.LocalPlayer  -- Adjust this based on your environment
+
+-- Function to get the player's current position
+local function getPlayerPosition()
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local position = character.HumanoidRootPart.Position
+        return string.format("Position: %.2f, %.2f, %.2f", position.X, position.Y, position.Z)
+    else
+        return "Position: N/A"
+    end
+end
+
+-- Create the button
+local button = Section:NewButton("Player Position", "Automatically updates player position", function()
+    -- Optional: Add functionality if the button is clicked
+    print("Button clicked, but auto-update is already running.")
+end)
+
+-- Function to update the button text every second
+local function autoUpdatePosition()
+    while true do
+        local newText = getPlayerPosition()
+        button:UpdateButton(newText)  -- Update the button text
+        wait(1)  -- Wait for 1 second before updating again
+    end
+end
+
+-- Run the auto-update loop in the background without blocking the script
+spawn(autoUpdatePosition)  -- Use 'spawn' to run the loop asynchronously
+
+
+Section:NewButton("Executor: "..identifyexecutor(), "ButtonInfo", function()
+end)
+Section:NewButton("DisplayName: "..game.Players.LocalPlayer.DisplayName.."", "Your Displayname", function()
+end)
+Section:NewButton("UserName: " .. game.Players.LocalPlayer.Name .. " ","No description",function()
+end)
+Section:NewButton("UserId: " .. game.Players.LocalPlayer.UserId,"No description",function()
+end)
+Section:NewButton("AccountAge: " .. game.Players.LocalPlayer.AccountAge .. " ","No description",function()
+end)
+local Section = Home:NewSection("Game Stats")
+Section:NewButton("GameName: ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. " ","No description",function()
+end)
+Section:NewButton("GamePlace Id: ".. game.PlaceId .. " ","No description",function()
+end)
+local Section = Home:NewSection("Overview Stats -- end --")
+
+local Player = Window:NewTab("Player / Utility")
+local Section = Player:NewSection("WalkSpeed")
+
+local walkSpeedLoop = false
+local chosenWalkSpeed = 16 -- Default walk speed
+local player = game.Players.LocalPlayer
+
+-- Function to continuously set WalkSpeed
+local function applyWalkSpeedLoop()
+    while walkSpeedLoop do
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = chosenWalkSpeed
+        end
+        wait(0.1) -- Adjust if necessary
+    end
+end
+
+-- Detects when the player respawns and reapplies the loop
+local function onCharacterAdded(character)
+    if walkSpeedLoop then
+        wait(1) -- Small delay to ensure character fully loads
+        applyWalkSpeedLoop()
+    end
+end
+player.CharacterAdded:Connect(onCharacterAdded)
+
+Section:NewSlider("WalkSpeed", "WalkSpeed", 1000, 16, function(s)
+    chosenWalkSpeed = s
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = s
+    end
+end)
+
+Section:NewTextBox("Set Walkspeed", "Set WalkSpeed", function(txt)
+    local speed = tonumber(txt)
+    if speed then
+        chosenWalkSpeed = speed
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = speed
+        end
+    end
+end)
+
+Section:NewToggle("Loop WalkSpeed", "Continuously sets WalkSpeed to the chosen value", function(state)
+    walkSpeedLoop = state
+    if state then
+        applyWalkSpeedLoop()
+    end
+end)
+
+
+Section:NewButton("Reset WalkSpeed", "Reset WalkSpeed", function()
+    chosenWalkSpeed = 16
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = 16
+    end
+end)
+
+local Section = Player:NewSection("JumpPower")
+
+Section:NewSlider("JumpPower", "JumpPower", 1000, 50, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = s
+end)
+
+Section:NewTextBox("Set JumpPower","Set JumpPower", function(txt)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = txt
+end)
+
+Section:NewToggle("JumpPower 120", "JumpPower 120", function(state)
+    if state then
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 120
+    else
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+    end
+end)
+
+Section:NewButton("Reset JumpPower", "Reset JumpPower", function()
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
+end)
+
+local Section = Player:NewSection("HipHeight")
+
+Section:NewSlider("HipHeight", "HipHeight", 100, 2, function(s)
+    game.Players.LocalPlayer.Character.Humanoid.HipHeight = s
+end)
+
+Section:NewTextBox("Set HipHeight", "Set HipHeight", function(txt)
+    game.Players.LocalPlayer.Character.Humanoid.HipHeight = txt
+end)
+
+Section:NewToggle("HipHeight 120", "HipHeight 120", function(state)
+    if state then
+        game.Players.LocalPlayer.Character.Humanoid.HipHeight = 120
+    else
+        game.Players.LocalPlayer.Character.Humanoid.HipHeight = 2
+    end
+end)
+
+Section:NewButton("Reset HipHeight", "Reset HipHeight", function()
+    game.Players.LocalPlayer.Character.Humanoid.HipHeight = 2
+end)
+local Section = Player:NewSection("Gravity")
+
+Section:NewSlider("Gravity", "Gravity", 1000, 196, function(s)
+    game.Workspace.Gravity = s
+end)
+
+Section:NewTextBox("Set Gravity", "Set Gravity ", function(txt)
+    game.Workspace.Gravity = txt
+end)
+
+Section:NewToggle("Gravity 120", "Gravity 120", function(state)
+    if state then
+        game.Workspace.Gravity = 120
+    else
+        game.Workspace.Gravity = 196
+    end
+end)
+
+Section:NewButton("Reset Gravity", "Reset Gravity", function()
+    game.Workspace.Gravity = 2
+end)
+local Section = Player:NewSection("Fov")
+
+Section:NewSlider("Fov", "Fov", 120, 80, function(s)
+    game.Workspace.CurrentCamera.FieldOfView = s
+end)
+
+Section:NewTextBox("Set Fov", "Set Fov", function(txt)
+    game.Workspace.CurrentCamera.FieldOfView = txt
+end)
+
+Section:NewToggle("Fov 120", "Fov 120", function(state)
+    if state then
+        game.Workspace.CurrentCamera.FieldOfView = 120
+    else
+        game.Workspace.CurrentCamera.FieldOfView = 80
+    end
+end)
+
+Section:NewButton("Reset Fov", "Reset Fov", function()
+    game.Workspace.CurrentCamera.FieldOfView = 80
+end)
+
+local Section = Player:NewSection("Fly's")
+--[[
+FE Mobile Fly By Fedoratum#6195
+Type in chat !stop to stop the script
+]]--
+
+local STARTERGUI = game:GetService("StarterGui")
+
+
+local NSound = Instance.new("Sound")
+NSound.SoundId = "rbxassetid://9086208751"
+NSound.Volume = 1
+
+function Notify(Txt, Dur)
+    STARTERGUI:SetCore("SendNotification", {
+        Title = "Twilight Fly",
+        Text = Txt,
+        Icon = "rbxassetid://",
+        Duration = Dur
+    })
+    NSound:Play()
+end
+
+
+
+
+local plr = game:GetService("Players").LocalPlayer
+local rs = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local buttonIsOn = false
+local speed = 50
+
+local controlModule = require(plr.PlayerScripts:WaitForChild('PlayerModule'):WaitForChild("ControlModule"))
+
+local bv = Instance.new("BodyVelocity")
+bv.Name = "VelocityHandler"
+bv.Parent = plr.Character.HumanoidRootPart
+bv.MaxForce = Vector3.new(0, 0, 0)
+bv.Velocity = Vector3.new(0, 0, 0)
+
+local bg = Instance.new("BodyGyro")
+bg.Name = "GyroHandler"
+bg.Parent = plr.Character.HumanoidRootPart
+bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+bg.P = 1000
+bg.D = 50
+
+local Signal1
+Signal1 = plr.CharacterAdded:Connect(function(NewChar)
+    local bv = Instance.new("BodyVelocity")
+    bv.Name = "VelocityHandler"
+    bv.Parent = NewChar:WaitForChild("Humanoid").RootPart
+    bv.MaxForce = Vector3.new(0, 0, 0)
+    bv.Velocity = Vector3.new(0, 0, 0)
+
+    local bg = Instance.new("BodyGyro")
+    bg.Name = "GyroHandler"
+    bg.Parent = NewChar:WaitForChild("Humanoid").RootPart
+    bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+    bg.P = 1000
+    bg.D = 50
+end)
+
+local camera = workspace.CurrentCamera
+
+local Signal2
+Signal2 = rs.RenderStepped:Connect(function()
+    if plr.Character and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character.Humanoid.RootPart and plr.Character.HumanoidRootPart:FindFirstChild("VelocityHandler") and plr.Character.HumanoidRootPart:FindFirstChild("GyroHandler") then
+
+        if buttonIsOn then
+            plr.Character.HumanoidRootPart.VelocityHandler.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+            plr.Character.HumanoidRootPart.GyroHandler.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            plr.Character.Humanoid.PlatformStand = true
+        else
+            plr.Character.HumanoidRootPart.VelocityHandler.MaxForce = Vector3.new(0, 0, 0)
+            plr.Character.HumanoidRootPart.GyroHandler.MaxTorque = Vector3.new(0, 0, 0)
+            plr.Character.Humanoid.PlatformStand = false
+            return
+        end
+
+        plr.Character.HumanoidRootPart.GyroHandler.CFrame = camera.CoordinateFrame
+        local direction = controlModule:GetMoveVector()
+        local velocity = Vector3.new()
+
+        if direction.X ~= 0 then
+            velocity = velocity + camera.CFrame.RightVector * (direction.X * speed)
+        end
+        if direction.Z ~= 0 then
+            velocity = velocity - camera.CFrame.LookVector * (direction.Z * speed)
+        end
+
+        -- Vertical Movement
+        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+            velocity = velocity + Vector3.new(0, speed, 0) -- Go Up
+        elseif UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+            velocity = velocity - Vector3.new(0, speed, 0) -- Go Down
+        end
+
+        plr.Character.HumanoidRootPart.VelocityHandler.Velocity = velocity
+    end
+end)
+
+-- **UI INTEGRATION**
+Section:NewToggle("Fly", "Toggle flight on or off", function(state)
+    buttonIsOn = state
+    if state then
+        Notify("Fly Enabled", 3)
+    else
+        Notify("Fly Disabled", 3)
+    end
+end)
+
+Section:NewTextBox("Set Speed", "Enter fly speed", function(txt)
+    local newSpeed = tonumber(txt)
+    if newSpeed then
+        speed = newSpeed
+        Notify("Speed set to " .. speed, 3)
+    else
+        Notify("Invalid speed!", 3)
+    end
+end)
+
+plr.Chatted:Connect(function(msg)
+    if msg:sub(1, 5) == "!stop" then
+        Signal1:Disconnect()
+        Signal2:Disconnect()
+        game:GetService("ReplicatedStorage"):FindFirstChild("BZn2q91BzN"):Destroy()
+        Notify("Fly script stopped!", 3)
+        plr.Character.Humanoid.Health = 0
+    end
+end)
+
+local Players = game.Players
+local LocalPlayer = Players.LocalPlayer
+local Section = Player:NewSection("Hitbox Editor")
+
+local hitboxSize = 2 -- Default hitbox size
+local hitboxVisible = false -- Controls hitbox visibility
+local hitboxColor = Color3.fromRGB(255, 255, 255) -- Default (Invisible) color
+local hitboxTransparency = 0.5 -- Default hitbox transparency
+
+local function notify(message)
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Hitbox Editor",
+        Text = message,
+        Duration = 3
+    })
+end
+
+local function applyHitbox(v)
+    if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+        v.Character.HumanoidRootPart.Size = Vector3.new(hitboxSize, hitboxSize, hitboxSize)
+        v.Character.HumanoidRootPart.Transparency = hitboxVisible and hitboxTransparency or 1 -- Invisible if not changed
+        v.Character.HumanoidRootPart.Color = hitboxVisible and hitboxColor or Color3.fromRGB(255, 255, 255)
+    end
+end
+
+-- Apply hitbox to all players and ensure it persists after respawn
+local function updateAllHitboxes()
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer then
+            applyHitbox(v)
+            v.CharacterAdded:Connect(function() 
+                task.wait(0.5) -- Small delay to ensure character loads
+                applyHitbox(v)
+            end)
+        end
+    end
+end
+
+Section:NewSlider("Hitbox Size", "Edit Hitbox Size", 20, 2, function(s) 
+    hitboxSize = s
+    hitboxVisible = true -- Make hitbox visible when changed
+    updateAllHitboxes()
+end)
+
+Section:NewTextBox("Set Hitbox Size", "Manually Set Hitbox Size", function(txt) 
+    local size = tonumber(txt) 
+    if size then 
+        hitboxSize = size
+        hitboxVisible = true -- Make hitbox visible when changed
+        updateAllHitboxes()
+        notify("Hitbox size set to " .. size)
+    else
+        notify("Invalid hitbox size entered!")
+    end
+end)
+
+-- New Textbox for Hitbox Transparency
+Section:NewTextBox("Set Hitbox Transparency", "Set Transparency (0 = Visible, 1 = Invisible)", function(txt)
+    local transparency = tonumber(txt)
+    if transparency and transparency >= 0 and transparency <= 1 then
+        hitboxTransparency = transparency
+        hitboxVisible = true -- Ensure hitbox is visible when transparency is changed
+        updateAllHitboxes()
+        notify("Hitbox transparency set to " .. transparency)
+    else
+        notify("Invalid transparency value! Must be between 0 and 1.")
+    end
+end)
+
+Section:NewToggle("Hitbox 20", "Toggle Max Hitbox", function(state) 
+    hitboxSize = state and 20 or 2
+    hitboxVisible = true -- Make hitbox visible when changed
+    updateAllHitboxes()
+    notify(state and "Max hitbox enabled (Size: 20)" or "Hitbox reset to default (Size: 2)")
+end)
+
+-- Dropdown for color selection (instantly applies color)
+Section:NewDropdown("Select Hitbox Color", "Choose a hitbox color", {"Default", "Red", "Blue", "Green", "Yellow"}, function(currentOption)
+    if currentOption == "Red" then
+        hitboxColor = Color3.fromRGB(255, 0, 0)
+    elseif currentOption == "Blue" then
+        hitboxColor = Color3.fromRGB(0, 0, 255)
+    elseif currentOption == "Green" then
+        hitboxColor = Color3.fromRGB(0, 255, 0)
+    elseif currentOption == "Yellow" then
+        hitboxColor = Color3.fromRGB(255, 255, 0)
+    else
+        hitboxColor = Color3.fromRGB(255, 255, 255) -- Default color
+    end
+    hitboxVisible = true -- Ensure hitbox becomes visible when changed
+    updateAllHitboxes()
+    notify("Hitbox color set to " .. currentOption)
+end)
+
+Section:NewButton("Reset Hitbox", "Remove Hitbox & Make Invisible", function() 
+    hitboxSize = 2 -- Reset to default size
+    hitboxVisible = false -- Make hitbox invisible
+    hitboxColor = Color3.fromRGB(255, 255, 255) -- Default color
+    for _, v in pairs(Players:GetPlayers()) do 
+        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then 
+            v.Character.HumanoidRootPart.Size = Vector3.new(2, 2, 1)
+            v.Character.HumanoidRootPart.Transparency = 1 -- Make invisible
+            v.Character.HumanoidRootPart.Color = Color3.fromRGB(255, 255, 255)
+        end 
+    end 
+    notify("Hitbox reset to default settings")
+end)
+
+-- Ensure hitbox applies to new players joining
+Players.PlayerAdded:Connect(function(v)
+    if v ~= LocalPlayer then
+        v.CharacterAdded:Connect(function()
+            task.wait(0.5)
+            applyHitbox(v)
+        end)
+    end
+end)
+
+updateAllHitboxes()
+
+local fov = 100
+local smoothingFactor = 1 -- Adjust for smoother switching
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local Cam = game.Workspace.CurrentCamera
+
+local AimBotEnabled = false
+local PlayerMovingCamera = false
+local CameraMoveThreshold = 50
+local aimTarget = "Head" -- Default target
+
+-- FOV Circle
+local FOVring = Drawing.new("Circle")
+FOVring.Thickness = 2
+FOVring.Color = Color3.fromRGB(128, 0, 128)
+FOVring.Filled = false
+FOVring.Radius = fov
+FOVring.Position = Cam.ViewportSize / 2
+FOVring.Visible = false
+
+-- Function to update FOV circle position
+local function updateDrawings()
+    FOVring.Position = Cam.ViewportSize / 2
+end
+
+-- Function to find closest player in FOV
+local function getClosestPlayerInFOV()
+    local nearest = nil
+    local last = math.huge
+    local playerMousePos = Cam.ViewportSize / 2
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            local part = player.Character and player.Character:FindFirstChild(aimTarget)
+            if part then
+                local ePos, isVisible = Cam:WorldToViewportPoint(part.Position)
+                local distance = (Vector2.new(ePos.x, ePos.y) - playerMousePos).Magnitude
+
+                if distance < last and isVisible and distance < fov then
+                    last = distance
+                    nearest = player
+                end
+            end
+        end
+    end
+
+    return nearest
+end
+
+-- Function to smoothly move camera towards target
+local function smoothLookAt(target)
+    if AimBotEnabled then
+        local currentCFrame = Cam.CFrame
+        local targetCFrame = CFrame.new(Cam.CFrame.Position, target)
+        Cam.CFrame = currentCFrame:Lerp(targetCFrame, smoothingFactor)
+    end
+end
+
+-- Detect when player moves camera too far (stops AimBot)
+local lastCameraRotation = Cam.CFrame.LookVector
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        local rotationDifference = (Cam.CFrame.LookVector - lastCameraRotation).Magnitude
+        if rotationDifference > CameraMoveThreshold / 100 then
+            PlayerMovingCamera = true
+        end
+        lastCameraRotation = Cam.CFrame.LookVector
+    end
+end)
+
+-- Reset movement flag after a delay
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        task.wait(0.5)
+        PlayerMovingCamera = false
+    end
+end)
+
+-- AimBot Execution
+RunService.RenderStepped:Connect(function()
+    updateDrawings()
+    FOVring.Visible = AimBotEnabled
+
+    if AimBotEnabled and not PlayerMovingCamera then
+        local closest = getClosestPlayerInFOV()
+        if closest and closest.Character and closest.Character:FindFirstChild(aimTarget) then
+            smoothLookAt(closest.Character[aimTarget].Position)
+        end
+    end
+end)
+
+-- UI Elements
+local Section = Player:NewSection("Lock AimBot")
+
+Section:NewToggle("Enable AimBot", "Locks Camera Instantly to Player's Selected Part", function(state)
+    AimBotEnabled = state
+    FOVring.Visible = state
+end)
+
+Section:NewSlider("Aim FOV", "Adjust AimBot Field of View", 200, 30, function(s)
+    fov = s
+    FOVring.Radius = s
+end)
+
+Section:NewTextBox("Set FOV", "Enter FOV value", function(txt)
+    local newFOV = tonumber(txt)
+    if newFOV then
+        fov = math.clamp(newFOV, 30, 200) -- Ensures valid range
+        FOVring.Radius = fov
+    end
+end)
+
+Section:NewDropdown("Aim Target", "Select body part to lock onto", {"Head", "HumanoidRootPart"}, function(selected)
+    aimTarget = selected
+end)
+
+local fov = 100
+local smoothingFactor = 0.4 -- Adjust for smoother switching
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local Cam = game.Workspace.CurrentCamera
+
+local AimBotEnabled = false
+local PlayerMovingCamera = false
+local CameraMoveThreshold = 50
+local aimTarget = "Head" -- Default target
+
+-- FOV Circle
+local FOVring = Drawing.new("Circle")
+FOVring.Thickness = 2
+FOVring.Color = Color3.fromRGB(128, 0, 128)
+FOVring.Filled = false
+FOVring.Radius = fov
+FOVring.Position = Cam.ViewportSize / 2
+FOVring.Visible = false
+
+-- Function to update FOV circle position
+local function updateDrawings()
+    FOVring.Position = Cam.ViewportSize / 2
+end
+
+-- Function to find closest player in FOV
+local function getClosestPlayerInFOV()
+    local nearest = nil
+    local last = math.huge
+    local playerMousePos = Cam.ViewportSize / 2
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer then
+            local part = player.Character and player.Character:FindFirstChild(aimTarget)
+            if part then
+                local ePos, isVisible = Cam:WorldToViewportPoint(part.Position)
+                local distance = (Vector2.new(ePos.x, ePos.y) - playerMousePos).Magnitude
+
+                if distance < last and isVisible and distance < fov then
+                    last = distance
+                    nearest = player
+                end
+            end
+        end
+    end
+
+    return nearest
+end
+
+-- Function to smoothly move camera towards target
+local function smoothLookAt(target)
+    if AimBotEnabled then
+        local currentCFrame = Cam.CFrame
+        local targetCFrame = CFrame.new(Cam.CFrame.Position, target)
+        Cam.CFrame = currentCFrame:Lerp(targetCFrame, smoothingFactor)
+    end
+end
+
+-- Detect when player moves camera too far (stops AimBot)
+local lastCameraRotation = Cam.CFrame.LookVector
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        local rotationDifference = (Cam.CFrame.LookVector - lastCameraRotation).Magnitude
+        if rotationDifference > CameraMoveThreshold / 100 then
+            PlayerMovingCamera = true
+        end
+        lastCameraRotation = Cam.CFrame.LookVector
+    end
+end)
+
+-- Reset movement flag after a delay
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        task.wait(0.5)
+        PlayerMovingCamera = false
+    end
+end)
+
+-- AimBot Execution
+RunService.RenderStepped:Connect(function()
+    updateDrawings()
+    FOVring.Visible = AimBotEnabled
+
+    if AimBotEnabled and not PlayerMovingCamera then
+        local closest = getClosestPlayerInFOV()
+        if closest and closest.Character and closest.Character:FindFirstChild(aimTarget) then
+            smoothLookAt(closest.Character[aimTarget].Position)
+        end
+    end
+end)
+
+-- UI Elements
+local Section = Player:NewSection("Smooth Aim Bot")
+
+Section:NewToggle("Enable AimBot", "Locks Camera Instantly to Player's Selected Part", function(state)
+    AimBotEnabled = state
+    FOVring.Visible = state
+end)
+
+Section:NewSlider("Aim FOV", "Adjust AimBot Field of View", 200, 30, function(s)
+    fov = s
+    FOVring.Radius = s
+end)
+
+Section:NewTextBox("Set FOV", "Enter FOV value", function(txt)
+    local newFOV = tonumber(txt)
+    if newFOV then
+        fov = math.clamp(newFOV, 30, 200) -- Ensures valid range
+        FOVring.Radius = fov
+    end
+end)
+
+Section:NewDropdown("Aim Target", "Select body part to lock onto", {"Head", "HumanoidRootPart"}, function(selected)
+    aimTarget = selected
+end)
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = game.Workspace.CurrentCamera
+
+local ESP_Enabled = {
+    Name = false,
+    Tracer = false,
+    Box = false,
+    HealthBar = false,
+    Distance = false,
+    Highlight = false -- Added Highlight ESP toggle
+}
+
+local ESP_Objects = {}
+local Highlight_Objects = {} -- Stores Highlight objects
+
+-- Function to clean up ESP objects for a player
+local function cleanupESP(player)
+    if ESP_Objects[player] then
+        for _, drawing in pairs(ESP_Objects[player]) do
+            drawing:Remove() -- Remove the Drawing object
+        end
+        ESP_Objects[player] = nil -- Clear the table entry
+    end
+    if Highlight_Objects[player] then
+        Highlight_Objects[player]:Destroy() -- Remove the Highlight object
+        Highlight_Objects[player] = nil -- Clear the table entry
+    end
+end
+
+-- Function to create ESP for a player
+local function createESP(player)
+    if player == LocalPlayer then return end -- Skip local player
+    if not player.Character then return end
+
+    local character = player.Character
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+
+    -- Remove ESP when player dies
+    humanoid.Died:Connect(function()
+        cleanupESP(player) -- Clean up ESP when the player dies
+    end)
+
+    -- Create ESP storage if not exists
+    if not ESP_Objects[player] then
+        ESP_Objects[player] = {}
+    end
+
+    -- Name ESP
+    if not ESP_Objects[player].Name then
+        local nameTag = Drawing.new("Text")
+        nameTag.Center = true
+        nameTag.Outline = true
+        nameTag.Size = 18
+        nameTag.Color = Color3.fromRGB(255, 255, 0) -- Yellow
+        nameTag.Visible = false
+        ESP_Objects[player].Name = nameTag
+    end
+
+    -- Tracer ESP
+    if not ESP_Objects[player].Tracer then
+        local tracer = Drawing.new("Line")
+        tracer.Thickness = 2
+        tracer.Color = Color3.fromRGB(255, 0, 0) -- Red
+        tracer.Visible = false
+        ESP_Objects[player].Tracer = tracer
+    end
+
+    -- Box ESP (Bigger Hitbox Style)
+    if not ESP_Objects[player].Box then
+        local box = Drawing.new("Square")
+        box.Thickness = 2
+        box.Color = Color3.fromRGB(0, 255, 0) -- Green
+        box.Filled = false
+        box.Visible = false
+        ESP_Objects[player].Box = box
+    end
+
+    -- Health Bar ESP
+    if not ESP_Objects[player].HealthBar then
+        local healthBar = Drawing.new("Square")
+        healthBar.Thickness = 1
+        healthBar.Filled = true
+        healthBar.Visible = false
+        ESP_Objects[player].HealthBar = healthBar
+    end
+
+    -- Distance ESP
+    if not ESP_Objects[player].Distance then
+        local distanceText = Drawing.new("Text")
+        distanceText.Center = true
+        distanceText.Outline = true
+        distanceText.Size = 14
+        distanceText.Color = Color3.fromRGB(0, 255, 255) -- Cyan
+        distanceText.Visible = false
+        ESP_Objects[player].Distance = distanceText
+    end
+
+    -- Highlight ESP
+    if not Highlight_Objects[player] then
+        local highlight = Instance.new("Highlight")
+        highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red fill
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- White outline
+        highlight.FillTransparency = 0.5 -- Semi-transparent
+        highlight.OutlineTransparency = 0
+        highlight.Parent = player.Character
+        Highlight_Objects[player] = highlight
+    end
+
+    -- Reattach Highlight when character changes (e.g., respawn or teleport)
+    player.CharacterAdded:Connect(function(newCharacter)
+        if Highlight_Objects[player] then
+            Highlight_Objects[player]:Destroy() -- Remove old Highlight
+        end
+        local newHighlight = Instance.new("Highlight")
+        newHighlight.FillColor = Color3.fromRGB(255, 0, 0) -- Red fill
+        newHighlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- White outline
+        newHighlight.FillTransparency = 0.5 -- Semi-transparent
+        newHighlight.OutlineTransparency = 0
+        newHighlight.Parent = newCharacter
+        Highlight_Objects[player] = newHighlight
+    end)
+end
+
+-- Function to update ESP for all players
+local function updateESP()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local character = player.Character
+            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+            local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+            local head = character and character:FindFirstChild("Head")
+
+            if character and humanoid and humanoid.Health > 0 and rootPart and head then
+                local screenPosition, onScreen = Camera:WorldToViewportPoint(rootPart.Position)
+                local distance = (LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head") and (LocalPlayer.Character.Head.Position - head.Position).Magnitude) or 0
+
+                if not ESP_Objects[player] then
+                    createESP(player)
+                end
+
+                -- Update Name ESP
+                if ESP_Objects[player].Name then
+                    local nameTag = ESP_Objects[player].Name
+                    nameTag.Position = Vector2.new(screenPosition.X, screenPosition.Y - 50)
+                    nameTag.Text = player.Name
+                    nameTag.Visible = ESP_Enabled.Name and onScreen
+                end
+
+                -- Update Tracer ESP
+                if ESP_Objects[player].Tracer then
+                    local tracer = ESP_Objects[player].Tracer
+                    tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                    tracer.To = Vector2.new(screenPosition.X, screenPosition.Y)
+                    tracer.Visible = ESP_Enabled.Tracer and onScreen
+                end
+
+                -- Update Box ESP (Bigger Hitbox Style)
+                if ESP_Objects[player].Box then
+                    local box = ESP_Objects[player].Box
+                    local rootPos, rootOnScreen = Camera:WorldToViewportPoint(rootPart.Position)
+                    local headPos, headOnScreen = Camera:WorldToViewportPoint(head.Position)
+
+                    if rootOnScreen and headOnScreen then
+                        local height = math.abs(headPos.Y - rootPos.Y) * 2.5 -- Bigger box
+                        local width = height / 1.5 -- Wider box
+                        box.Position = Vector2.new(rootPos.X - width / 2, rootPos.Y - height / 2)
+                        box.Size = Vector2.new(width, height)
+                        box.Visible = ESP_Enabled.Box and onScreen
+                    else
+                        box.Visible = false
+                    end
+                end
+
+                -- Update Health Bar ESP
+                if ESP_Objects[player].HealthBar and humanoid then
+                    local healthBar = ESP_Objects[player].HealthBar
+                    healthBar.Position = Vector2.new(screenPosition.X - 30, screenPosition.Y - 25)
+                    healthBar.Size = Vector2.new(5, 50 * (humanoid.Health / humanoid.MaxHealth))
+                    healthBar.Color = Color3.fromRGB(0, 255, 0) -- Green when full
+                    if humanoid.Health < humanoid.MaxHealth / 2 then
+                        healthBar.Color = Color3.fromRGB(255, 165, 0) -- Orange for mid health
+                    end
+                    if humanoid.Health < humanoid.MaxHealth / 4 then
+                        healthBar.Color = Color3.fromRGB(255, 0, 0) -- Red for low health
+                    end
+                    healthBar.Visible = ESP_Enabled.HealthBar and onScreen
+                end
+
+                -- Update Distance ESP
+                if ESP_Objects[player].Distance then
+                    local distanceText = ESP_Objects[player].Distance
+                    distanceText.Position = Vector2.new(screenPosition.X, screenPosition.Y + 20)
+                    distanceText.Text = "[" .. math.floor(distance) .. "m]"
+                    distanceText.Visible = ESP_Enabled.Distance and onScreen
+                end
+
+                -- Update Highlight ESP
+                if Highlight_Objects[player] then
+                    Highlight_Objects[player].Enabled = ESP_Enabled.Highlight
+                    Highlight_Objects[player].Adornee = character -- Ensure Highlight is attached to the character
+                end
+            else
+                -- Clean up ESP if player is dead or character is invalid
+                cleanupESP(player)
+            end
+        end
+    end
+end
+
+-- UI Section for ESP
+local ESP_SECTION = Player:NewSection("ESP Options")
+
+ESP_SECTION:NewToggle("ESP Name", "Shows player names", function(state)
+    ESP_Enabled.Name = state
+    if not state then
+        for _, player in pairs(Players:GetPlayers()) do
+            if ESP_Objects[player] and ESP_Objects[player].Name then
+                ESP_Objects[player].Name.Visible = false
+            end
+        end
+    end
+end)
+
+ESP_SECTION:NewToggle("ESP Tracer", "Draws lines to players", function(state)
+    ESP_Enabled.Tracer = state
+    if not state then
+        for _, player in pairs(Players:GetPlayers()) do
+            if ESP_Objects[player] and ESP_Objects[player].Tracer then
+                ESP_Objects[player].Tracer.Visible = false
+            end
+        end
+    end
+end)
+
+ESP_SECTION:NewToggle("ESP Box", "Draws hitbox-style boxes around players", function(state)
+    ESP_Enabled.Box = state
+    if not state then
+        for _, player in pairs(Players:GetPlayers()) do
+            if ESP_Objects[player] and ESP_Objects[player].Box then
+                ESP_Objects[player].Box.Visible = false
+            end
+        end
+    end
+end)
+
+ESP_SECTION:NewToggle("Health Bar ESP", "Shows player health as a bar", function(state)
+    ESP_Enabled.HealthBar = state
+    if not state then
+        for _, player in pairs(Players:GetPlayers()) do
+            if ESP_Objects[player] and ESP_Objects[player].HealthBar then
+                ESP_Objects[player].HealthBar.Visible = false
+            end
+        end
+    end
+end)
+
+ESP_SECTION:NewToggle("Distance ESP", "Shows player distance", function(state)
+    ESP_Enabled.Distance = state
+    if not state then
+        for _, player in pairs(Players:GetPlayers()) do
+            if ESP_Objects[player] and ESP_Objects[player].Distance then
+                ESP_Objects[player].Distance.Visible = false
+            end
+        end
+    end
+end)
+
+ESP_SECTION:NewToggle("Highlight ESP", "Highlights players", function(state)
+    ESP_Enabled.Highlight = state
+    if not state then
+        for _, player in pairs(Players:GetPlayers()) do
+            if Highlight_Objects[player] then
+                Highlight_Objects[player].Enabled = false
+            end
+        end
+    end
+end)
+
+-- Auto-create ESP for existing and new players
+Players.PlayerAdded:Connect(function(player)
+    createESP(player)
+    player.CharacterAdded:Connect(function()
+        createESP(player)
+    end)
+end)
+
+for _, player in pairs(Players:GetPlayers()) do
+    createESP(player)
+    player.CharacterAdded:Connect(function()
+        createESP(player)
+    end)
+end
+
+-- Clean up ESP when a player leaves
+Players.PlayerRemoving:Connect(function(player)
+    cleanupESP(player)
+end)
+
+-- Update ESP every frame
+RunService.RenderStepped:Connect(updateESP)
+
+
+local Section = Player:NewSection("View/Teleport")
+
+-- Variable to store the selected player and view state
+local SelectedPlayer = nil
+local IsViewing = false
+
+-- Textbox to type a player's name (with autofill)
+Section:NewTextBox("Type Player Name", "Type the name of the player", function(txt)
+    for _, player in pairs(game.Players:GetPlayers()) do
+        -- Check if the typed text matches the beginning of a player's name
+        if string.sub(string.lower(player.Name), 1, string.len(txt)) == string.lower(txt) then
+            SelectedPlayer = player.Name  -- Autofill the player's name
+            break
+        end
+    end
+end)
+
+-- Dropdown to select a player from a list
+local players = {}
+for _, player in pairs(game.Players:GetPlayers()) do
+    table.insert(players, player.Name)  -- Add all player names to the dropdown list
+end
+
+Section:NewDropdown("Select Player", "Choose a player from the list", players, function(selectedPlayer)
+    SelectedPlayer = selectedPlayer  -- Store the selected player's name
+end)
+
+-- Button to toggle between viewing and unviewing
+Section:NewButton("View/Unview", "Toggle viewing the selected player", function()
+    if SelectedPlayer then
+        if IsViewing then
+            -- Unview: Reset the camera to the local player
+            workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+            IsViewing = false
+            print("Stopped viewing " .. SelectedPlayer)
+        else
+            -- View: Switch the camera to the selected player
+            workspace.CurrentCamera.CameraSubject = game.Players[SelectedPlayer].Character.Humanoid
+            IsViewing = true
+            print("Now viewing " .. SelectedPlayer)
+        end
+    else
+        print("No player selected.")
+    end
+end)
+
+-- Button to teleport to the selected player
+Section:NewButton("Teleport", "Teleport to the selected player", function()
+    if SelectedPlayer then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Players[SelectedPlayer].Character.Head.Position)
+        print("Teleported to " .. SelectedPlayer)
+    else
+        print("No player selected.")
+    end
+end)
+
+-- Button to teleport to the selected player
+Section:NewButton("Teleport", "Teleport to the selected player", function()
+    if SelectedPlayer then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game.Players[SelectedPlayer].Character.Head.Position)
+    else
+        print("No player selected.")
+    end
+end)
+
+
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TPWalkEnabled = false
+local TPWalkSpeed = 1 -- Default speed
+
+-- Function to check if a value is a number
+local function isNumber(value)
+    return tonumber(value) ~= nil or value == "inf"
+end
+
+-- Function to apply TP Walk
+local function applyTPWalk()
+    local Character = LocalPlayer.Character
+    local Humanoid = Character and Character:FindFirstChildWhichIsA("Humanoid")
+
+    if TPWalkEnabled and Character and Humanoid then
+        RunService.Heartbeat:Connect(function()
+            if TPWalkEnabled and Humanoid.MoveDirection.Magnitude > 0 then
+                if isNumber(TPWalkSpeed) then
+                    Character:TranslateBy(Humanoid.MoveDirection * tonumber(TPWalkSpeed))
+                else
+                    Character:TranslateBy(Humanoid.MoveDirection)
+                end
+            end
+        end)
+    end
+end
+
+-- UI Elements
+local Section = Player:NewSection("TP Walk")
+
+-- Toggle to Enable/Disable TP Walk
+Section:NewToggle("Enable TP Walk", "Toggle TP Walk on/off", function(state)
+    TPWalkEnabled = state
+    if state then
+        applyTPWalk()
+    end
+end)
+
+-- TextBox to Set Speed
+Section:NewTextBox("Set TP Walk Speed", "Enter speed value", function(txt)
+    if isNumber(txt) then
+        TPWalkSpeed = txt
+    end
+end)
+
+-- Dropdowns to Set Speed Presets
+Section:NewDropdown("TP Walk Speed 1", "Choose speed", {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}, function(selected)
+    TPWalkSpeed = selected
+end)
+
+Section:NewDropdown("TP Walk Speed 2", "Choose higher speed", {"11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}, function(selected)
+    TPWalkSpeed = selected
+end)
+
+
+local Section = Player:NewSection("Other Utilities")
+Section:NewButton("Remove Texture (Decrease Lag)", "Remover Texture", function()
+loadstring(game:HttpGet("https://pastefy.app/SA3cYmh2/raw"))()
+end)
+Section:NewButton("Clone (Not Fe)", "clones you're avatar not fe", function()
+loadstring(game:GetObjects('rbxassetid://7339698872')[1].Source)()
+end)
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ShiftlockStarterGui = Instance.new("ScreenGui")
+local ImageButton = Instance.new("ImageButton")
+
+-- Properties:
+
+ShiftlockStarterGui.Name = "Shiftlock (StarterGui)"
+ShiftlockStarterGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ShiftlockStarterGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+ImageButton.Parent = ShiftlockStarterGui
+ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ImageButton.BackgroundTransparency = 1.000
+ImageButton.Position = UDim2.new(0.85, 0, 0.5, 0) -- Adjusted spawn position
+ImageButton.Size = UDim2.new(0.06, 0, 0.06, 0) -- Made it smaller
+ImageButton.SizeConstraint = Enum.SizeConstraint.RelativeXX
+ImageButton.Image = "http://www.roblox.com/asset/?id=182223762"
+ImageButton.Active = true
+ImageButton.Draggable = true -- Make it draggable
+ImageButton.Visible = false -- Starts hidden
+
+-- Scripts:
+
+local function ShiftlockScript() 
+	local script = Instance.new('LocalScript', ImageButton)
+
+	local runservice = game:GetService("RunService")
+	local players = game:GetService("Players")
+	local StarterGui = game:GetService("StarterGui")
+	local CAS = game:GetService("ContextActionService")
+	local player = players.LocalPlayer
+	local character = player.Character or player.CharacterAdded:Wait()
+	local root = character:WaitForChild("HumanoidRootPart")
+	local humanoid = character.Humanoid
+	local camera = workspace.CurrentCamera
+	local button = script.Parent
+	
+	local states = {
+		OFF = "rbxasset://textures/ui/mouseLock_off@2x.png",
+		ON = "rbxasset://textures/ui/mouseLock_on@2x.png"
+	}
+
+	local MAX_LENGTH = 900000
+	local active = false
+	local shiftlockEnabled = false
+	local notificationsEnabled = false -- New flag to control notifications
+	local ENABLED_OFFSET = CFrame.new(1.7, 0, 0)
+	local DISABLED_OFFSET = CFrame.new(-1.7, 0, 0)
+
+	local function UpdateImage(STATE)
+		button.Image = states[STATE]
+	end
+
+	local function UpdateAutoRotate(BOOL)
+		humanoid.AutoRotate = BOOL
+	end
+
+	local function GetUpdatedCameraCFrame(ROOT, CAMERA)
+		return CFrame.new(root.Position, Vector3.new(CAMERA.CFrame.LookVector.X * MAX_LENGTH, root.Position.Y, CAMERA.CFrame.LookVector.Z * MAX_LENGTH))
+	end
+
+	local function EnableShiftlock()
+		UpdateAutoRotate(false)
+		UpdateImage("ON")
+		root.CFrame = GetUpdatedCameraCFrame(root, camera)
+		camera.CFrame = camera.CFrame * ENABLED_OFFSET
+	end
+
+	local function DisableShiftlock()
+		UpdateAutoRotate(true)
+		UpdateImage("OFF")
+		camera.CFrame = camera.CFrame * DISABLED_OFFSET
+		pcall(function()
+			active:Disconnect()
+			active = nil
+		end)
+	end
+
+	UpdateImage("OFF")
+	active = false
+
+	function ShiftLock()
+		if not active then
+			active = runservice.RenderStepped:Connect(function()
+				EnableShiftlock()
+			end)
+		else
+			DisableShiftlock()
+		end
+	end
+
+	button.MouseButton1Click:Connect(function()
+		if not active then
+			active = runservice.RenderStepped:Connect(function()
+				EnableShiftlock()
+			end)
+		else
+			DisableShiftlock()
+		end
+	end)
+
+	-- Function to toggle visibility and notifications
+	local function ToggleShiftLockGUI(state)
+		shiftlockEnabled = state
+		button.Visible = state -- Show/Hide button based on toggle
+
+		if state then
+			notificationsEnabled = true -- Enable notifications
+			StarterGui:SetCore("SendNotification", {
+				Title = "Shift Lock";
+				Text = "Enabled";
+				Duration = 2;
+			})
+		else
+			if notificationsEnabled then
+				StarterGui:SetCore("SendNotification", {
+					Title = "Shift Lock";
+					Text = "Disabled";
+					Duration = 2;
+				})
+				notificationsEnabled = false -- Disable notifications after showing
+			end
+			DisableShiftlock() -- Turn off shift lock if GUI is disabled
+		end
+	end
+
+	return ShiftLock, ToggleShiftLockGUI
+end
+
+local ShiftLock, ToggleShiftLockGUI = ShiftlockScript()
+
+-- Toggle Integration
+Section:NewToggle("Shift Lock", "Toggle Shift Lock On/Off", function(state)
+    ToggleShiftLockGUI(state) -- Show/hide button when toggled
+end)
+
+local jumpConnection -- Store the connection
+
+Section:NewToggle("Infinity Jump", "Toggle infinite jumping on or off", function(state)
+    if state then
+        -- Ensure we don't create multiple connections
+        if not jumpConnection then
+            jumpConnection = game:GetService("UserInputService").JumpRequest:Connect(function()
+                local humanoid = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end)
+        end
+        print("Infinite Jump Enabled")
+    else
+        -- Disconnect the connection to disable infinite jump
+        if jumpConnection then
+            jumpConnection:Disconnect()
+            jumpConnection = nil
+        end
+        print("Infinite Jump Disabled")
+    end
+end)
+
+local isNoClipEnabled = false
+Section:NewToggle("Noclip", "Toggle Noclip", function(enabled)
+    isNoClipEnabled = enabled
+    local character = game.Players.LocalPlayer.Character
+
+    while isNoClipEnabled do
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+        game:GetService("RunService").Stepped:Wait()
+    end
+end)
+local xrayOn = false
+Section:NewToggle("Xray", "Toggle Xray", function(enabled)
+    xrayOn = enabled
+
+    if xrayOn then
+        for _, descendant in pairs(workspace:GetDescendants()) do
+            if descendant:IsA("BasePart") then
+                if not descendant:FindFirstChild("OriginalTransparency") then
+                    local originalTransparency = Instance.new("NumberValue")
+                    originalTransparency.Name = "OriginalTransparency"
+                    originalTransparency.Value = descendant.Transparency
+                    originalTransparency.Parent = descendant
+                end
+                descendant.Transparency = 0.5
+            end
+        end
+    else
+        for _, descendant in pairs(workspace:GetDescendants()) do
+            if descendant:IsA("BasePart") then
+                if descendant:FindFirstChild("OriginalTransparency") then
+                    descendant.Transparency = descendant.OriginalTransparency.Value
+                    descendant.OriginalTransparency:Destroy()
+                end
+            end
+        end
+    end
+end)
+
+local J = false;
+Section:NewToggle("Bunny Hop","?",function(K)
+J = K;
+spawn(function()
+while wait()
+and J do game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Jump = true
+end
+end)
+end)
+Section:NewToggle("Sit", "Toggle Sit", function(state)
+    if state then
+        game.Players.LocalPlayer.Character.Humanoid.Sit = true
+    else
+        game.Players.LocalPlayer.Character.Humanoid.Sit = false
+    end
+end)
+Section:NewToggle("Full Bright", "Toggles full bright mode", function(state)
+    if state then
+        -- Enable full bright
+        game.Lighting.Ambient = Color3.new(1, 1, 1)
+        game.Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+        game.Lighting.Brightness = 5
+        print("Full Bright Enabled")
+    else
+        -- Restore default lighting settings (you may need to adjust these)
+        game.Lighting.Ambient = Color3.new(0, 0, 0)
+        game.Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
+        game.Lighting.Brightness = 1
+        print("Full Bright Disabled")
+    end
+end)
+
+local Section = Player:NewSection("Time Control")
+
+-- Variables for tracking modes
+local isDay = false
+local isNight = false
+local customTime = nil
+
+-- Function to continuously update time based on the selected mode
+task.spawn(function()
+    while true do
+        task.wait(0) -- Updates every second
+        if isDay then
+            game.Lighting.TimeOfDay = 7 -- Morning
+        elseif isNight then
+            game.Lighting.TimeOfDay = 1 -- Midnight
+        elseif customTime then
+            game.Lighting.TimeOfDay = customTime -- Custom Time
+        end
+    end
+end)
+
+-- Slider to manually change time
+Section:NewSlider("Set Time", "Adjust time of day", 1, 24, function(s)
+    customTime = s
+    isDay = false
+    isNight = false
+end)
+
+-- Textbox to manually set a specific time
+Section:NewTextBox("Enter Time 1-24", "Manually set time", function(txt)
+    local time = tonumber(txt)
+    if time then
+        customTime = math.clamp(time, 1, 24) -- Ensures time stays in range
+        isDay = false
+        isNight = false
+    end
+end)
+
+-- Toggle for setting daytime
+Section:NewToggle("Day Mode", "Sets the time to day (7 AM)", function(state)
+    if state then
+        isDay = true
+        isNight = false
+        customTime = nil
+    else
+        isDay = false
+    end
+end)
+
+-- Toggle for setting nighttime
+Section:NewToggle("Night Mode", "Sets the time to night (1 AM)", function(state)
+    if state then
+        isNight = true
+        isDay = false
+        customTime = nil
+    else
+        isNight = false
+    end
+end)
+
+local TextChatService = game:GetService("TextChatService")
+local spamEnabled = false
+local spamMessage = "Default Message" -- Default message in case nothing is typed
+
+local Section = Player:NewSection("Chat!")
+
+-- Textbox to set the spam message
+Section:NewTextBox("Chat Your Message", "Type a message to spam", function(txt)
+    spamMessage = txt -- Store the user's message for spamming
+    if TextChatService.ChatInputBarConfiguration then
+        TextChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync(txt) -- Send once immediately
+    end
+end)
+
+-- Toggle to start/stop spamming
+Section:NewToggle("Spam Typed Chat", "Toggle spam messages on/off", function(state)
+    spamEnabled = state
+
+    if spamEnabled then
+        task.spawn(function()
+            while spamEnabled do
+                task.wait(1) -- Adjust spam speed (1 second between messages)
+                if TextChatService.ChatInputBarConfiguration then
+                    TextChatService.ChatInputBarConfiguration.TargetTextChannel:SendAsync(spamMessage)
+                end
+            end
+        end)
+        print("Spam Enabled: " .. spamMessage)
+    else
+        print("Spam Disabled")
+    end
+end)
+
+local Section = Player:NewSection("Character")
+Section:NewTextBox("Set Health", "Makes Your Health 0 - 100 Th Did U Think It Would Do", function(txt)
+    game.Players.LocalPlayer.Character.Humanoid.Health = txt
+end)
+
+Section:NewButton("Reset [Health]", "Makes Your Health 0 Th Did U Think It Would Do", function()
+    game.Players.LocalPlayer.Character.Humanoid.Health = 0
+end)
+
+Section:NewButton("Anti Fall Damage", "Anti Fall Damage", function()
+    game.Players.LocalPlayer.Character.FallDamageScript:Destroy()
+end)
+
+
+local Section = Player:NewSection("Animations (soon)")
+local Section = Player:NewSection("Others (soon)")
+local Section = Player:NewSection("Visual Tab -- end --")
+
+local Scripts = Window:NewTab("Scripts")
+local Section = Scripts:NewSection("Fly's")
+Section:NewButton("Fly | ArceusX Mobile", "Fly ArceusXBy ArceusX Neo", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/chillz-workshop/main/Arceus%20Fly.lua"))()
+end)
+
+Section:NewButton("Fly | HD ADMIN V1", "Made By Take Modzz Or DXP Team", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/TakeModzz/Ignore-00000/main/Ignore"))()
+end)
+
+Section:NewButton("Fly | Gui V3", "ButtonInfo", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+end)
+local Section = Scripts:NewSection("Visuals")
+Section:NewButton("Visuals | Lock Shift Lock", "ButtonInfo", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/lm9awd8103/lm9awd8103/refs/heads/main/shiftlock"))()
+end)
+Section:NewButton("Visuals | Draggable Shift Lock", "ButtonInfo", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/lm9awd8103/lm9awd8103/refs/heads/main/shift1"))()
+end)
+local Section = Scripts:NewSection("Combat")
+local Section = Scripts:NewSection("FE Guis/Transformations")
+
+
+local Misc = Window:NewTab("Misc's")
+local Section = Misc:NewSection("Misc")
+Section:NewButton("Misc | Clone (Not Fe)", "clones you're avatar not fe", function()
+loadstring(game:GetObjects('rbxassetid://7339698872')[1].Source)()
+end)
+
+local Admins = Window:NewTab("Admins")
+local Section = Admins:NewSection("Soon")
+
+local Games = Window:NewTab("Games")
+local Section = Games:NewSection("Soon")
+
+local Hubs = Window:NewTab("More Other Hubs")
+local Section = Hubs:NewSection("Soon too lol")
+
+
+local Executors = Window:NewTab("Executors")
+local Section = Executors:NewSection("Soon")
+
+local Settings = Window:NewTab("Settings")
+local Section = Settings:NewSection("soon")
+local Section = Settings:NewSection("Ui Color Changer")
+
+for _, theme, color in ipairs(themes) do
+    Section:NewColorPicker(theme, "Change your " .. theme, colors[theme], function(color)
+        colors[theme] = color
+    end)
+end
+ 
+Section:NewKeybind("Keybind", "Keybind F To Open/Close", Enum.KeyCode.F, function()
+	Library:ToggleUI(F)
+end) 
+ 
+local Credits = Window:NewTab("About Us")
+local Section = Credits:NewSection("Soon")
+
+
+
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ScreenGui"
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+-- Create the Toggle button
+local Toggle = Instance.new("ImageButton") -- Use ImageButton
+Toggle.Name = "Toggle"
+Toggle.Parent = ScreenGui
+Toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Default background color
+Toggle.Size = UDim2.new(0, 60, 0, 60) -- Square size (38x38)
+Toggle.Image = "rbxassetid://89080175935937" -- Replace with your image ID
+Toggle.ScaleType = Enum.ScaleType.Fit -- Ensures the image fits within the button
+Toggle.Draggable = true -- Allows the button to be dragged
+
+-- Position the button all the way to the left and in the middle vertically
+Toggle.Position = UDim2.new(0, 10, 0.2, -19) -- 10 pixels from the left, centered vertically
+
+-- Add rounded corners (optional)
+local Corner = Instance.new("UICorner")
+Corner.Name = "Corner"
+Corner.Parent = Toggle
+Corner.CornerRadius = UDim.new(0, 8) -- Adjust the corner radius as needed
+
+-- Toggle state variable
+local isToggled = false
+
+-- Variables to track dragging
+local isDragging = false
+local dragStartPosition = Vector2.new(0, 0)
+local dragThreshold = 5 -- Pixels of movement required to count as dragging
+
+-- Detect when dragging starts
+Toggle.MouseButton1Down:Connect(function()
+    dragStartPosition = Vector2.new(Toggle.AbsolutePosition.X, Toggle.AbsolutePosition.Y)
+    isDragging = false
+end)
+
+-- Detect when dragging ends
+Toggle.MouseButton1Up:Connect(function()
+    if not isDragging then
+        -- Only toggle if the button wasn't dragged
+        isToggled = not isToggled -- Flip the toggle state
+
+        -- Change the button's appearance based on the toggle state
+        if isToggled then
+            Toggle.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Green for "on" state
+        else
+            Toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Default color for "off" state
+        end
+
+        Library:ToggleUI() -- Call the toggle function (assuming it exists)
+    end
+end)
+
+-- Detect mouse movement while holding the button
+Toggle.MouseMoved:Connect(function()
+    local currentPosition = Vector2.new(Toggle.AbsolutePosition.X, Toggle.AbsolutePosition.Y)
+    if (currentPosition - dragStartPosition).Magnitude > dragThreshold then
+        isDragging = true -- Player is dragging the button
+    end
+end) 
