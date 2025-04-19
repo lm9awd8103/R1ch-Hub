@@ -379,26 +379,29 @@ local Corner3 = Instance.new("UICorner")
     Logo.ZIndex = 2
     Logo.Image = "http://www.roblox.com/asset/?id=115999273037408"
     
--- RAINBOW BORDER START (balanced for stroke thickness)
+-- RAINBOW BORDER START (corner-perfect fit)
 local RunService = game:GetService("RunService")
 
 local border = Instance.new("Frame")
-border.Size = UDim2.new(1, 6, 1, 6)
-border.Position = UDim2.new(0, -3, 0, -3)
+border.Size = UDim2.new(1, 0, 1, 0)
+border.Position = UDim2.new(0, 0, 0, 0)
 border.BackgroundTransparency = 1
 border.ZIndex = 0
 border.Parent = ScreenGui
 
 -- Sync with Main frame
 RunService.RenderStepped:Connect(function()
-    border.Position = Main.Position - UDim2.new(0, 3, 0, 3)
-    border.Size = Main.Size + UDim2.new(0, 6, 0, 6)
+    border.Position = Main.Position
+    border.Size = Main.Size
 end)
 
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 5
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = border
+
+-- Set rounded corners if desired (optional)
+border.BorderRadius = UDim.new(0, 10) -- Adjust corner radius as needed
 
 local hue = 0
 RunService.RenderStepped:Connect(function()
