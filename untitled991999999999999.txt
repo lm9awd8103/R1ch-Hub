@@ -398,21 +398,26 @@ local Corner3 = Instance.new("UICorner")
     coverup_2.Position = UDim2.new(0.949939311, 0, 0, 0)
     coverup_2.Size = UDim2.new(0, 7, 0, 289)
 
-Main.Parent = ScreenGui
-
 -- RAINBOW BORDER START
 local RunService = game:GetService("RunService")
 
 local border = Instance.new("Frame")
-border.Size = UDim2.new(1, 6, 1, 6)
-border.Position = UDim2.new(0, -3, 0, -3)
+border.Size = UDim2.new(1, 8, 1, 8)
+border.Position = UDim2.new(0, -4, 0, -4)
 border.BackgroundTransparency = 1
-border.ZIndex = Main.ZIndex - 1
-border.Parent = Main
+border.ZIndex = 1000
+border.Parent = ScreenGui
+
+-- Keep it synced with Main frame
+RunService.RenderStepped:Connect(function()
+    border.Position = Main.Position - UDim2.new(0, 4, 0, 4)
+    border.Size = Main.Size + UDim2.new(0, 8, 0, 8)
+end)
 
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 5
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+stroke.ZIndex = 1001
 stroke.Parent = border
 
 local hue = 0
