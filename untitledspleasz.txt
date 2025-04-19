@@ -379,20 +379,20 @@ local Corner3 = Instance.new("UICorner")
     Logo.ZIndex = 2
     Logo.Image = "http://www.roblox.com/asset/?id=115999273037408"
     
--- RAINBOW BORDER (snug fit)
+-- RAINBOW BORDER (even tighter fit)
 local RunService = game:GetService("RunService")
 
 local border = Instance.new("Frame")
-border.Size = UDim2.new(1, 1, 1, 1)  -- Tightened by 1 pixel on both axes
-border.Position = UDim2.new(0, -0.5, 0, -0.5)  -- Tightened offset
+border.Size = UDim2.new(1, 0, 1, 0)  -- Tightened by 0 pixels, making it exactly fit
+border.Position = UDim2.new(0, -0.25, 0, -0.25)  -- Adjusted to fit even tighter
 border.BackgroundTransparency = 1
 border.ZIndex = 0
 border.Parent = ScreenGui
 
 -- Sync with Main frame
 RunService.RenderStepped:Connect(function()
-    border.Position = Main.Position - UDim2.new(0, 0.5, 0, 0.5)
-    border.Size = Main.Size + UDim2.new(0, 1, 0, 1)
+    border.Position = Main.Position - UDim2.new(0, 0.25, 0, 0.25)
+    border.Size = Main.Size + UDim2.new(0, 0.5, 0, 0.5)
 end)
 
 local stroke = Instance.new("UIStroke")
