@@ -362,7 +362,7 @@ adjustTransparency(Main)
     title3.Size = UDim2.new(0, 204, 0, 8)
     title3.Font = Enum.Font.FredokaOne
     title3.RichText = true
-    title3.Text = "                                       V2.7"
+    title3.Text = "                                       V2.7 | Universal"
     title3.TextColor3 = Color3.fromRGB(135, 206, 250)
     title3.TextSize = 14.000
     title3.TextXAlignment = Enum.TextXAlignment.Left
@@ -379,29 +379,26 @@ local Corner3 = Instance.new("UICorner")
     Logo.ZIndex = 2
     Logo.Image = "http://www.roblox.com/asset/?id=115999273037408"
     
--- RAINBOW BORDER START (corrected fit with no radius error)
+-- RAINBOW BORDER START (perfect fit)
 local RunService = game:GetService("RunService")
 
 local border = Instance.new("Frame")
-border.Size = UDim2.new(1, 4, 1, 4)  -- Slightly bigger than the main UI frame
-border.Position = UDim2.new(0, -2, 0, -2)  -- 2 pixels outward for border
+border.Size = UDim2.new(1, 1, 1, 1)  -- Slightly extended to cover all corners
+border.Position = UDim2.new(0, -0.5, 0, -0.5)  -- Slight offset
 border.BackgroundTransparency = 1
 border.ZIndex = 0
 border.Parent = ScreenGui
 
 -- Sync with Main frame
 RunService.RenderStepped:Connect(function()
-    border.Position = Main.Position - UDim2.new(0, 2, 0, 2)  -- Adjust to match
-    border.Size = Main.Size + UDim2.new(0, 4, 0, 4)  -- Make border slightly bigger
+    border.Position = Main.Position - UDim2.new(0, 0.5, 0, 0.5)
+    border.Size = Main.Size + UDim2.new(0, 1, 0, 1)
 end)
 
 local stroke = Instance.new("UIStroke")
 stroke.Thickness = 5
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 stroke.Parent = border
-
--- Optional: If you want rounded corners for the stroke, add this:
-border.CornerRadius = UDim.new(0, 10)  -- Adjust to your preference
 
 local hue = 0
 RunService.RenderStepped:Connect(function()
