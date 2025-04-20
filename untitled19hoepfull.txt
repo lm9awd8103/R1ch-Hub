@@ -2701,25 +2701,25 @@ end)
                 --
                 local moveConnection
 
-rgb.MouseButton1Down:Connect(function()
-    colorpicker = true
-    if moveConnection then moveConnection:Disconnect() end
-    moveConnection = mouse.Move:Connect(cp)
-end)
+                rgb.MouseButton1Down:Connect(function()
+                    colorpicker = true
+                    if moveConnection then moveConnection:Disconnect() end
+                    moveConnection = mouse.Move:Connect(cp)
+                end)
 
-dark.MouseButton1Down:Connect(function()
-    darknesss = true
-    if moveConnection then moveConnection:Disconnect() end
-    moveConnection = mouse.Move:Connect(cp)
-end)
+                dark.MouseButton1Down:Connect(function()
+                    darknesss = true
+                    if moveConnection then moveConnection:Disconnect() end
+                    moveConnection = mouse.Move:Connect(cp)
+                end)
 
-uis.InputEnded:Connect(function(input)
-    if input.UserInputType.Name == 'MouseButton1' then
-        if darknesss then darknesss = false end
-        if colorpicker then colorpicker = false end
-        if moveConnection then moveConnection:Disconnect() moveConnection = nil end
-    end
-end)
+                uis.InputEnded:Connect(function(input)
+                    if input.UserInputType.Name == 'MouseButton1' then
+                        if darknesss then darknesss = false end
+                        if colorpicker then colorpicker = false end
+                        if moveConnection then moveConnection:Disconnect() moveConnection = nil end
+                    end
+                end)
             
             function Elements:NewLabel(title)
             	local labelFunctions = {}
