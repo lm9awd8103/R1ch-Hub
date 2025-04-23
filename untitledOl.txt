@@ -1161,6 +1161,40 @@ function Elements:NewToggle(tname, nTip, callback)
     viewInfo.ImageRectOffset = Vector2.new(764, 764)
     viewInfo.ImageRectSize = Vector2.new(36, 36)
 
+
+
+    -- Resize function
+    local function UpdateSize()
+        local innerSize = sectionElListing.AbsoluteContentSize
+        sectionInners.Size = UDim2.new(1, 0, 0, innerSize.Y)
+        local totalSize = sectionlistoknvm.AbsoluteContentSize
+        sectionFrame.Size = UDim2.new(0, 352, 0, totalSize.Y)
+        page.CanvasSize = UDim2.new(0, 0, 0, totalSize.Y + 20)
+    end
+    UpdateSize()
+    sectionInners.ChildAdded:Connect(UpdateSize)
+    sectionInners.ChildRemoved:Connect(UpdateSize)
+
+    local function updateToggle()
+        toggleEnabled.ImageTransparency = toggled and 0 or 1
+        callback(toggled)
+    end
+
+    toggleElement.MouseButton1Click:Connect(function()
+        if not focusing then
+            toggled = not toggled
+            updateToggle()
+        end
+    end)
+
+    function TogFunction:UpdateToggle(newText, isTogOn)
+        if newText then
+            togName.Text = newText
+        end
+        toggled = isTogOn or false
+        updateToggle()
+    end
+
     -- Add these lines to connect toggle elements to theme system
     Objects[toggleDisabled] = "ImageColor3"
     Objects[toggleEnabled] = "ImageColor3"
@@ -1199,38 +1233,6 @@ viewInfo.MouseButton1Click:Connect(function()
         viewDe = false
     end
 end)
-
-    -- Resize function
-    local function UpdateSize()
-        local innerSize = sectionElListing.AbsoluteContentSize
-        sectionInners.Size = UDim2.new(1, 0, 0, innerSize.Y)
-        local totalSize = sectionlistoknvm.AbsoluteContentSize
-        sectionFrame.Size = UDim2.new(0, 352, 0, totalSize.Y)
-        page.CanvasSize = UDim2.new(0, 0, 0, totalSize.Y + 20)
-    end
-    UpdateSize()
-    sectionInners.ChildAdded:Connect(UpdateSize)
-    sectionInners.ChildRemoved:Connect(UpdateSize)
-
-    local function updateToggle()
-        toggleEnabled.ImageTransparency = toggled and 0 or 1
-        callback(toggled)
-    end
-
-    toggleElement.MouseButton1Click:Connect(function()
-        if not focusing then
-            toggled = not toggled
-            updateToggle()
-        end
-    end)
-
-    function TogFunction:UpdateToggle(newText, isTogOn)
-        if newText then
-            togName.Text = newText
-        end
-        toggled = isTogOn or false
-        updateToggle()
-    end
 
     return TogFunction
 end
