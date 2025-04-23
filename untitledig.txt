@@ -1112,7 +1112,7 @@ function Elements:NewToggle(tname, nTip, callback)
     toggleElement.ClipsDescendants = true
     toggleElement.Size = UDim2.new(0, 352, 0, 33)
     toggleElement.AutoButtonColor = false
-    toggleElement.Font = Enum.Font.SourceSans
+    toggleElement.Font = Enum.Font.FredokaOne
     toggleElement.Text = ""
     toggleElement.TextColor3 = Color3.fromRGB(0, 0, 0)
     toggleElement.TextSize = 14.000
@@ -1149,7 +1149,7 @@ function Elements:NewToggle(tname, nTip, callback)
     togName.BackgroundTransparency = 1.000
     togName.Position = UDim2.new(0.096704483, 0, 0.272727281, 0)
     togName.Size = UDim2.new(0, 288, 0, 14)
-    togName.Font = Enum.Font.GothamSemibold
+    togName.Font = Enum.Font.FredokaOne
     togName.Text = tname
     togName.RichText = true
     togName.TextColor3 = themeList.TextColor
@@ -1185,7 +1185,7 @@ function Elements:NewToggle(tname, nTip, callback)
     moreInfo.Position = UDim2.new(0, 0, 2, 0)
     moreInfo.Size = UDim2.new(0, 353, 0, 33)
     moreInfo.ZIndex = 9
-    moreInfo.Font = Enum.Font.GothamSemibold
+    moreInfo.Font = Enum.Font.FredokaOne
     moreInfo.RichText = true
     moreInfo.Text = "  "..nTip
     moreInfo.TextColor3 = themeList.TextColor
